@@ -1,5 +1,5 @@
 
-const Content = () => {
+const Content = ({parts}) => {
   return (
     <div>Content</div>
   )

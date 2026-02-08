@@ -1,5 +1,5 @@
 
-const Total = () => {
+const Total = ({parts}) => {
   return (
     <div>Total</div>
   )
