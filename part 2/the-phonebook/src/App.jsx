@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Filter from './Filter'
 import PersonForm from './PersonForm'
@@ -6,16 +6,18 @@ import Persons from './Persons'
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { id: 1, name: 'Arto Hellas', number: '040-123456' },
-    { id: 2, name: 'Ada Lovelace', number: '39-44-5323523' },
-    { id: 3, name: 'Dan Abramov', number: '12-43-234345' },
-    { id: 4, name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
-
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+
+
+  // 🔥 Obtener datos desde db.json
+  useEffect(() => {
+    fetch('http://localhost:3001/persons')
+      .then(response => response.json())
+      .then(data => setPersons(data))
+  }, [])
 
 
   const handleNameChange = (event) => {
@@ -46,15 +48,24 @@ const App = () => {
     }
 
     const newPerson = {
-      id: persons.length + 1,
       name: newName,
       number: newNumber
     }
 
-    setPersons(persons.concat(newPerson))
-
-    setNewName('')
-    setNewNumber('')
+    // 🔥 Guardar también en el servidor
+    fetch('http://localhost:3001/persons', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newPerson)
+    })
+      .then(response => response.json())
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
 
